@@ -1,4 +1,6 @@
 import uuid
+import json
+import os
 
 # Dummy product data
 products = {
@@ -25,6 +27,21 @@ def calculate_total_cost(cart):
         if product_id in products:
             total_cost += products[product_id]['price'] * quantity
     return total_cost
+
+def save_order(order_id, cart, total_cost):
+    order = {
+        'order_id': order_id,
+        'cart': cart,
+        'total_cost': total_cost
+    }
+    if os.path.exists('orders.json'):
+        with open('orders.json', 'r') as file:
+            orders = json.load(file)
+    else:
+        orders = {}
+    orders[order_id] = order
+    with open('orders.json', 'w') as file:
+        json.dump(orders, file, indent=4)
 
 def main():
     print("Welcome to the product order system!")
@@ -57,6 +74,7 @@ def main():
     else:
         order_id = str(uuid.uuid4())
         total_cost = calculate_total_cost(cart)
+        save_order(order_id, cart, total_cost)
         print(f"\nOrder ID: {order_id}")
         print("\nYour cart:")
         for product_id, quantity in cart.items():
