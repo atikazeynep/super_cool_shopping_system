@@ -1,3 +1,5 @@
+import uuid
+
 # Dummy product data
 products = {
     'P001': {'name': 'Product 1', 'price': 10.0},
@@ -53,7 +55,9 @@ def main():
     if not cart:
         print("No products in the cart. Exiting...")
     else:
+        order_id = str(uuid.uuid4())
         total_cost = calculate_total_cost(cart)
+        print(f"\nOrder ID: {order_id}")
         print("\nYour cart:")
         for product_id, quantity in cart.items():
             product_name = products[product_id]['name']
