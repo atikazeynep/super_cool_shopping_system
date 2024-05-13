@@ -4,22 +4,40 @@ import os
 
 # Dummy product data
 products = {
-    'P001': {'name': 'Product 1', 'price': 10.0},
-    'P002': {'name': 'Product 2', 'price': 15.5},
-    'P003': {'name': 'Product 3', 'price': 7.25},
-    'P004': {'name': 'Product 4', 'price': 12.0},
-    'P005': {'name': 'Product 5', 'price': 9.0},
-    'P006': {'name': 'Product 6', 'price': 20.0},
-    'P007': {'name': 'Product 7', 'price': 5.5},
-    'P008': {'name': 'Product 8', 'price': 18.75},
-    'P009': {'name': 'Product 9', 'price': 11.0},
-    'P010': {'name': 'Product 10', 'price': 14.0},
-    'P011': {'name': 'Product 11', 'price': 6.75},
-    'P012': {'name': 'Product 12', 'price': 13.5},
-    'P013': {'name': 'Product 13', 'price': 22.0},
-    'P014': {'name': 'Product 14', 'price': 19.25},
-    'P015': {'name': 'Product 15', 'price': 8.0},
+    'P001': {'name': 'Product 1', 'price': 10.0, 'category': 'Electronics'},
+    'P002': {'name': 'Product 2', 'price': 15.5, 'category': 'Electronics'},
+    'P003': {'name': 'Product 3', 'price': 7.25, 'category': 'Book'},
+    'P004': {'name': 'Product 4', 'price': 12.0, 'category': 'Book'},
+    'P005': {'name': 'Product 5', 'price': 9.0, 'category': 'Book'},
+    'P006': {'name': 'Product 6', 'price': 20.0, 'category': 'Games'},
+    'P007': {'name': 'Product 7', 'price': 5.5, 'category': 'Games'},
+    'P008': {'name': 'Product 8', 'price': 18.75, 'category': 'Automotive'},
+    'P009': {'name': 'Product 9', 'price': 11.0, 'category': 'Automotive'},
+    'P010': {'name': 'Product 10', 'price': 14.0, 'category': 'Automotive'},
+    'P011': {'name': 'Product 11', 'price': 6.75, 'category': 'Automotive'},
+    'P012': {'name': 'Product 12', 'price': 13.5, 'category': 'Food'},
+    'P013': {'name': 'Product 13', 'price': 22.0, 'category': 'Food'},
+    'P014': {'name': 'Product 14', 'price': 19.25, 'category': 'Food'},
+    'P015': {'name': 'Product 15', 'price': 8.0, 'category': 'Food'},
 }
+
+def search_products(search_query):
+    search_query = search_query.lower().strip()
+    matched_products = {pid: prod for pid, prod in products.items() if search_query in prod['name'].lower()}
+    return matched_products
+
+def filter_products(min_price=None, max_price=None, category=None):
+    filtered_products = products.copy()
+    
+    if min_price is not None:
+        filtered_products = {pid: prod for pid, prod in filtered_products.items() if prod['price'] >= min_price}
+    if max_price is not None:
+        filtered_products = {pid: prod for pid, prod in filtered_products.items() if prod['price'] <= max_price}
+    if category:
+        filtered_products = {pid: prod for pid, prod in filtered_products.items() if prod['category'].lower() == category.lower()}
+    
+    return filtered_products
+
 
 def calculate_total_cost(cart):
     total_cost = 0.0
