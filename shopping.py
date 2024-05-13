@@ -46,11 +46,12 @@ def calculate_total_cost(cart):
             total_cost += products[product_id]['price'] * quantity
     return total_cost
 
-def save_order(order_id, cart, total_cost):
+def save_order(order_id, cart, total_cost, status='pending'):
     order = {
         'order_id': order_id,
         'cart': cart,
-        'total_cost': total_cost
+        'total_cost': total_cost,
+        'status': status
     }
     if os.path.exists('orders.json'):
         with open('orders.json', 'r') as file:
