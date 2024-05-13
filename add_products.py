@@ -61,7 +61,7 @@ def main():
             print("Exiting product management system.")
             break
         else:
-            print("Invalid choice. Please try again.")
+            print("Invalid choice. Try again.")
 
 if __name__ == "__main__":
     main()
