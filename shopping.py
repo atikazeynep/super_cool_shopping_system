@@ -1,6 +1,7 @@
 import uuid
 import json
 import os
+import datetime
 
 # Dummy product data
 products = {
@@ -20,6 +21,30 @@ products = {
     'P014': {'name': 'Product 14', 'price': 19.25, 'category': 'Food'},
     'P015': {'name': 'Product 15', 'price': 8.0, 'category': 'Food'},
 }
+
+coupons = {
+    'WELCOME10': {'type': 'percentage', 'amount': 10, 'expire_date': datetime.date(2024, 12, 31), 'usage_limit': 100, 'min_purchase': 50},
+    '5OFF': {'type': 'fixed', 'amount': 5, 'expire_date': datetime.date(2024, 5, 30), 'usage_limit': 50, 'min_purchase': 30}
+}
+
+def validate_coupon(code, total_cost):
+    if code in coupons:
+        coupon = coupons[code]
+        today = datetime.date.today()
+        if today <= coupon['expire_date']:
+            if coupon['usage_limit'] > 0:
+                if total_cost >= coupon['min_purchase']:
+                    return coupon
+    return None
+
+def apply_coupon(coupon, total_cost):
+    if coupon['type'] == 'percentage':
+        discount = (total_cost * coupon['amount']) / 100
+    else:  # 'fixed' type
+        discount = coupon['amount']
+    
+    new_total = max(0, total_cost - discount)
+    return new_total, discount
 
 def search_products(search_query):
     search_query = search_query.lower().strip()
@@ -101,8 +126,18 @@ def main():
     if not cart:
         print("No products in the cart. Exiting...")
     else:
-        order_id = str(uuid.uuid4())
         total_cost = calculate_total_cost(cart)
+        coupon_code = input("Enter a coupon code (or leave blank): ").strip()
+        if coupon_code:
+            coupon = validate_coupon(coupon_code, total_cost)
+            if coupon:
+                total_cost, discount = apply_coupon(coupon, total_cost)
+                print(f"Coupon applied. You saved ${discount:.2f}")
+            else:
+                print("Invalid or expired coupon code.")
+        print(f"\nTotal cost after any coupons: ${total_cost:.2f}")
+
+        order_id = str(uuid.uuid4())
         save_order(order_id, cart, total_cost)
         print(f"\nOrder ID: {order_id}")
         print("\nYour cart:")
