@@ -31,6 +31,7 @@ def calculate_points_earned(total_cost):
     return int(total_cost)
 
 def calculate_discount(points):
+    # 100 points = $1 discount
     return points / 100
 
 def validate_coupon(code, total_cost):

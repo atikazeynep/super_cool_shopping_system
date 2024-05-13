@@ -27,12 +27,7 @@ coupons = {
     '5OFF': {'type': 'fixed', 'amount': 5, 'expire_date': datetime.date(2024, 5, 30), 'usage_limit': 50, 'min_purchase': 30}
 }
 
-def calculate_points_earned(total_cost):
-    return int(total_cost)
-
-def calculate_discount(points):
-    return points / 100
-
+# Function to validate coupon and apply discount
 def validate_coupon(code, total_cost):
     if code in coupons:
         coupon = coupons[code]
