@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Order</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create Order</h1>
+    <form id="orderForm">
+        <div id="productFields">
+            <div class="form-group">
+                <label for="productId1">Product ID:</label>
+                <input type="text" id="productId1" name="productId1" required>
+                <label for="quantity1">Quantity:</label>
+                <input type="number" id="quantity1" name="quantity1" required>
+            </div>
+        </div>
+        <button type="button" onclick="addProductField()">Add Another Product</button>
+        <button type="submit">Submit Order</button>
+    </form>
+
+    <script>
+        let productCount = 1;
+
+        function addProductField() {
+            productCount++;
+            const productFields = document.getElementById('productFields');
+
+            const newFieldGroup = document.createElement('div');
+            newFieldGroup.className = 'form-group';
+
+            const productIdLabel = document.createElement('label');
+            productIdLabel.htmlFor = `productId${productCount}`;
+            productIdLabel.innerText = 'Product ID:';
+            newFieldGroup.appendChild(productIdLabel);
+
+            const productIdInput = document.createElement('input');
+            productIdInput.type = 'text';
+            productIdInput.id = `productId${productCount}`;
+            productIdInput.name = `productId${productCount}`;
+            productIdInput.required = true;
+            newFieldGroup.appendChild(productIdInput);
+
+            const quantityLabel = document.createElement('label');
+            quantityLabel.htmlFor = `quantity${productCount}`;
+            quantityLabel.innerText = 'Quantity:';
+            newFieldGroup.appendChild(quantityLabel);
+
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.id = `quantity${productCount}`;
+            quantityInput.name = `quantity${productCount}`;
+            quantityInput.required = true;
+            newFieldGroup.appendChild(quantityInput);
+
+            productFields.appendChild(newFieldGroup);
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const orderData = {};
+            formData.forEach((value, key) => {
+                orderData[key] = value;
+            });
+
+            try {
+                const response = await fetch('/submit_order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (response.ok) {
+                    alert('Order submitted successfully!');
+                } else {
+                    alert('Failed to submit order.');
+                }
+            } catch (error) {
+                console.error('Error submitting order:', error);
+                alert('Failed to submit order.');
+            }
+        });
+    </script>
+</body>
+</html>
+
