@@ -66,26 +66,36 @@ def main():
     cart = {}
     
     while True:
-        product_id = input("Enter the product ID (or type 'done' to finish): ").strip()
-        if product_id.lower() == 'done':
+        action = input("Choose an action - Search (s), Filter (f), Add to Cart (a), Done (d): ").lower()
+        if action == 'd':
             break
-        if product_id not in products:
-            print(f"Product ID {product_id} not found. Please try again.")
-            continue
-        
-        try:
-            quantity = int(input(f"Enter the quantity for {products[product_id]['name']} (Product ID: {product_id}): ").strip())
-            if quantity <= 0:
-                print("Quantity should be a positive integer. Please try again.")
-                continue
-        except ValueError:
-            print("Invalid quantity. Please enter a positive integer.")
-            continue
-
-        if product_id in cart:
-            cart[product_id] += quantity
-        else:
-            cart[product_id] = quantity
+        elif action == 's':
+            search_query = input("Enter search term for product name: ")
+            results = search_products(search_query)
+            print("Search Results:")
+            for pid, prod in results.items():
+                print(f"{pid}: {prod['name']} - ${prod['price']} - {prod['category']}")
+        elif action == 'f':
+            min_price = float(input("Enter minimum price: "))
+            max_price = float(input("Enter maximum price: "))
+            category = input("Enter category (optional): ")
+            results = filter_products(min_price, max_price, category)
+            print("Filter Results:")
+            for pid, prod in results.items():
+                print(f"{pid}: {prod['name']} - ${prod['price']} - {prod['category']}")
+        elif action == 'a':
+            product_id = input("Enter the product ID to add to cart: ")
+            if product_id in products:
+                quantity = int(input(f"Enter quantity for {products[product_id]['name']}: "))
+                if quantity > 0:
+                    if product_id in cart:
+                        cart[product_id] += quantity
+                    else:
+                        cart[product_id] = quantity
+                else:
+                    print("Quantity must be positive.")
+            else:
+                print("Invalid product ID.")
 
     if not cart:
         print("No products in the cart. Exiting...")
