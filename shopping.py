@@ -23,15 +23,20 @@ products = {
 }
 
 coupons = {
-    'WELCOME10': {'type': 'percentage', 'amount': 10, 'expire_date': datetime.date(2024, 12, 31), 'usage_limit': 100, 'min_purchase': 50},
-    '5OFF': {'type': 'fixed', 'amount': 5, 'expire_date': datetime.date(2024, 5, 30), 'usage_limit': 50, 'min_purchase': 30}
+    'WELCOME10': {'type': 'percentage', 'amount': 10, 'expire_date': datetime.date(2024, 12, 31), 'usage_limit': 100,
+                  'min_purchase': 50},
+    '5OFF': {'type': 'fixed', 'amount': 5, 'expire_date': datetime.date(2024, 5, 30), 'usage_limit': 50,
+             'min_purchase': 30}
 }
+
 
 def calculate_points_earned(total_cost):
     return int(total_cost)
 
+
 def calculate_discount(points):
     return points / 100
+
 
 def validate_coupon(code, total_cost):
     if code in coupons:
@@ -43,6 +48,7 @@ def validate_coupon(code, total_cost):
                     return coupon
     return None
 
+
 def apply_coupon(coupon, total_cost):
     if coupon['type'] == 'percentage':
         discount = (total_cost * coupon['amount']) / 100
@@ -51,10 +57,12 @@ def apply_coupon(coupon, total_cost):
     new_total = max(0, total_cost - discount)
     return new_total, discount
 
+
 def search_products(search_query):
     search_query = search_query.lower().strip()
     matched_products = {pid: prod for pid, prod in products.items() if search_query in prod['name'].lower()}
     return matched_products
+
 
 def filter_products(min_price=None, max_price=None, category=None):
     filtered_products = products.copy()
@@ -63,8 +71,10 @@ def filter_products(min_price=None, max_price=None, category=None):
     if max_price is not None:
         filtered_products = {pid: prod for pid, prod in filtered_products.items() if prod['price'] <= max_price}
     if category:
-        filtered_products = {pid: prod for pid, prod in filtered_products.items() if prod['category'].lower() == category.lower()}
+        filtered_products = {pid: prod for pid, prod in filtered_products.items() if
+                             prod['category'].lower() == category.lower()}
     return filtered_products
+
 
 # Function to calculate total cost and manage points
 def calculate_total_cost(cart):
@@ -74,8 +84,10 @@ def calculate_total_cost(cart):
             total_cost += products[product_id]['price'] * quantity
     return total_cost
 
+
 def calculate_points(total_cost):
     return int(total_cost / 10)  # Earn 1 point for every $10 spent
+
 
 def save_order(order_id, cart, total_cost, points_earned, status='pending'):
     order = {
@@ -94,10 +106,11 @@ def save_order(order_id, cart, total_cost, points_earned, status='pending'):
     with open('orders.json', 'w') as file:
         json.dump(orders, file, indent=4)
 
+
 def main():
     print("Welcome to the product order system!")
     cart = {}
-    
+
     while True:
         action = input("Choose an action - Search (s), Filter (f), Add to Cart (a), Done (d): ").lower()
         if action == 'd':
@@ -149,10 +162,36 @@ def main():
         for product_id, quantity in cart.items():
             product_name = products[product_id]['name']
             product_price = products[product_id]['price']
-            print(f"{product_name} (Product ID: {product_id}) - Quantity: {quantity} - Unit Price: ${product_price:.2f} - Subtotal: ${product_price * quantity:.2f}")
+            print(
+                f"{product_name} (Product ID: {product_id}) - Quantity: {quantity} - Unit Price: ${product_price:.2f} - Subtotal: ${product_price * quantity:.2f}")
 
         print(f"\nTotal cost: ${total_cost:.2f}")
         print(f"Points earned this purchase: {points_earned}")
 
-if __name__ == "__main__":
-    main()
+
+def add_to_cart(product_id, quantity, cart):
+    if product_id in products:
+        if quantity <= products[product_id]['available_quantity']:
+            if product_id in cart:
+                cart[product_id] += quantity
+            else:
+                cart[product_id] = quantity
+            products[product_id]['available_quantity'] -= quantity
+            print(f"{quantity} units of {products[product_id]['name']} added to cart.")
+        else:
+            print(
+                f"Sorry, only {products[product_id]['available_quantity']} units of {products[product_id]['name']} are available.")
+    else:
+        print("Invalid product ID.")
+    return cart
+
+
+def update_product_inventory(product_id, new_quantity):
+    if product_id in products:
+        products[product_id]['available_quantity'] = new_quantity
+        print(f"Inventory updated for {products[product_id]['name']}: {new_quantity} units available.")
+    else:
+        print("Invalid product ID.")
+
+        if __name__ == "__main__":
+            main()
