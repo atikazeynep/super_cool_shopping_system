@@ -154,5 +154,29 @@ def main():
         print(f"\nTotal cost: ${total_cost:.2f}")
         print(f"Points earned this purchase: {points_earned}")
 
+def add_to_cart(product_id, quantity, cart):
+    if product_id in products:
+        if quantity <= products[product_id]['available_quantity']:
+            if product_id in cart:
+                cart[product_id] += quantity
+            else:
+                cart[product_id] = quantity
+            products[product_id]['available_quantity'] -= quantity
+            print(f"{quantity} units of {products[product_id]['name']} added to cart.")
+        else:
+            print(f"Sorry, only {products[product_id]['available_quantity']} units of {products[product_id]['name']} are available.")
+    else:
+        print("Invalid product ID.")
+    return cart
+
+
+def update_product_inventory(product_id, new_quantity):
+    if product_id in products:
+        products[product_id]['available_quantity'] = new_quantity
+        print(f"Inventory updated for {products[product_id]['name']}: {new_quantity} units available.")
+    else:
+	print("Invalid product ID.")
+
+
 if __name__ == "__main__":
     main()
